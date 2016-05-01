@@ -1,0 +1,70 @@
+
+.tree-level-dropdown-container {
+  float: left;
+  color: #333;
+}
+
+.tree-collapse-all, .tree-expand-all {
+  float: left;
+  padding-top: 5px;
+  margin-left: 15px;
+  color: #333;
+  text-decoration: underline;
+}
+
+.toggle-container {
+  display: inline-block;
+  height: 18px;
+  width: 18px;
+  vertical-align: middle;
+  visibility: hidden;
+}
+
+tr > *:last-child, tr > *:nth-last-child(2) {
+/*  display: none; */
+}
+
+.tree-toggle-collapsed {
+  content: url('expand_more.png');
+  visibility: visible;
+  margin-right: 1px;
+  cursor: pointer;
+}
+
+.tree-toggle-collapsed-disabled {
+  content: url('expand_more_disabled.png');
+  visibility: visible;
+  margin-right: 1px;
+}
+
+.tree-toggle-expanded {
+  content: url('expand_less.png');
+  visibility: visible;
+  cursor: pointer;
+}
+
+.tree-toggle-expanded-disabled {
+  content: url('expand_less.png');
+  visibility: visible;
+  cursor: pointer;
+}
+
+.tree-level-1 td:first-child{
+  padding-left: 3px;
+}
+
+.tree-level-2 td:first-child{
+  padding-left: 21px;
+}
+
+.tree-level-3 td:first-child{
+  padding-left: 49px;
+}
+
+.tree-level-4 td:first-child{
+  padding-left: 67px;
+}
+
+.tree-level-5-and-above td:first-child{
+  padding-left: 75px;
+}
