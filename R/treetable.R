@@ -1,6 +1,6 @@
 #' Translates hierarchy levels into unique group names which represent the
-#' elements hierarchy position. A '_exp' is added at the end of the groups name, if
-#' it has child elements.
+#' elements hierarchy position. A '_exp' is added at the end of the groups name
+#' if it has child elements.
 #'
 #' @param levels Vector of hierarchy levels.
 #'
@@ -24,8 +24,20 @@ levelsToGroups <- function(levels) {
   return(groups)
 }
 
-data <- data.frame(a = 1:9, b = letters[1:9], c = c(5, 2, 3, 9, 4, 3, 1, 5, 3))
 
+#' Title
+#'
+#' @param data data.frame containing data to be shown
+#' @param levels hierarchy levels
+#'
+#' @return html widget to display treetable data. See datatable function of
+#' package DT
+#' @export
+#'
+#' @examples
+#' data <- data.frame(a = 1:9, b = c(5, 2, 3, 9, 4, 3, 1, 5, 3))
+#' levels <- c(1, 2, 2, 1, 2, 3, 3, 2, 1)
+#' treetable(data, levels)
 treetable <- function(data, levels) {
 
   data[[ncol(data) + 1]] <- levels
@@ -35,7 +47,6 @@ treetable <- function(data, levels) {
   toggleState <- character(nrow(data))
   toggleState[gsub("[0-9]+(_exp)", "\\1", groups) == "_exp"] <- "tree-toggle-expanded"
   toggleState[gsub("[0-9]+(_col)", "\\1", groups) == "_col"] <- "tree-toggle-collapsed"
-
   toggleState[toggleState != ""] <- paste0("<img class = '", toggleState[toggleState != ""], "' onclick = 'toggleTree(this);' />")
 
   data$a <- paste0("<div class = toggle-container>", toggleState ,"</div><span>", data$a, "</span>")
@@ -57,16 +68,13 @@ treetable <- function(data, levels) {
                             addCustomSearch(settings);
                           }"
                         ),
-#                         columns = list(
-#                           list(orderDataType = "test_fab"),
-#                           list(orderDataType = "test_fab"),
-#                           list(orderDataType = "test_fab"),
-#                           list(orderDataType = "test_fab")
-#                         ),
                         columnDefs = list(
-                         list(targets = c(0, (ncol(data) - 2) : ncol(data) - 1), searchable = F),
-                         list(targets = 2, orderDataType = "group", type = "num")
-#                           list(targets = "_all", orderDataType = "anti-the")
+                          list(targets = c(-2, -1),
+                               searchable = F,
+                               visible = F),
+                          list(targets = "_all",
+                               orderDataType = "group",
+                               type = "num")
                         ),
                         language = list(
                           emptyTable = "Keine Daten in der Tabelle vorhanden",
@@ -86,7 +94,7 @@ treetable <- function(data, levels) {
                             'next' = "Nächste",
                             last = "Letzte"
                           ),
-                          aria = list (
+                          aria = list(
                             sortAscending = ": aktivieren, um Spalte aufsteigend zu sortieren",
                             sortDescending = ": aktivieren, um Spalte absteigend zu sortieren"
                           )
@@ -107,7 +115,6 @@ treetable <- function(data, levels) {
                               version = "0.0.1",
                               src = list(file = paste0(getwd(), "/R")),
                               stylesheet = "treetable.css")
-  dt
 
   data[[(ncol(data) - 1)]] <- NULL
   data[[(ncol(data))]] <- NULL

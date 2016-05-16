@@ -9,7 +9,8 @@ function toggleTree(x) {
   $(x).toggleClass("tree-toggle-collapsed tree-toggle-expanded");
 
   var tr = $(x).closest('tr');
-  var clickedGroup = tr.find('td:last').text();
+  var groupFromClassRegex = new RegExp("(?:^|\\s)(?:tree-group-)([^\\s]+)");
+  var clickedGroup = tr.attr("class").match(groupFromClassRegex)[1];
 
   var group = clickedGroup.slice(0, -4);
   var tableJQuery = $(x).closest('table');
@@ -18,23 +19,24 @@ function toggleTree(x) {
   regExpCollapse = new RegExp("(^|\\s)tree-group-" + group + "[0-9]");
   regExpExpand = new RegExp("(^|\\s)tree-group-" + group + "[0-9](_exp)?(\\s|$)");
 
+
   if($(x).hasClass("tree-toggle-collapsed")) {
     collapseTr = collapseTr.filter(function() {
       return(this.className.match(regExpCollapse));
-    })
+    });
     collapseTr.hide();
 
     regExpCollapseToggles = new RegExp("(^|\\s)tree-group-" + group + "[0-9](_exp)(\\s|$)");
     collapseToggles = collapseTr.filter(function() {
       return(this.className.match(regExpCollapseToggles));
-    })
+    });
     collapseToggles.find('.tree-toggle-expanded').toggleClass("tree-toggle-expanded tree-toggle-collapsed");
-    collapseToggles.css('display: inline-block;')
+    collapseToggles.css('display: inline-block;');
 
   } else {
     collapseTr = collapseTr.filter(function() {
       return(this.className.match(regExpExpand));
-    })
+    });
     collapseTr.show();
   }
 }
@@ -63,7 +65,7 @@ function addLevelDropdown(settings) {
       <select class = 'tree-level-dropdown' onchange = 'levelChanged(this);'> \
       </select> \
     </label>"
-  )
+  );
 
   var levelDropdown = levelDropdownContainer.find(".tree-level-dropdown");
   var levels = table.column(nCols - 2).data().unique().sort();
@@ -194,51 +196,7 @@ function applySearch(e) {
       tr.hide();
     }
   }
-
-  // clear search
-  // table.search('').columns().search( '' );
 }
-
-
-
-
-
-$.fn.dataTable.ext.order['fab'] = function(settings, col) {
-
-  var table = new $.fn.dataTable.Api(settings);
-//  var table = this.api().table();
-  var nCols = table.columns()[0].length;
-  var nRows = table.rows()[0].length;
-
-  var sortInfo = table.settings().order();
-  var sortDir = sortInfo[0][1]; // either "asc" or "desc"
-
-
-console.log("before");
-  console.log(table.rows().indexes());
-  table.order([2, 'desc']).draw();
-  console.log("after");
-  console.log(table.rows().indexes());
-
-  var test = this.api().column( col, {order:'index'} ).nodes().map(function(td, i) {
-    console.log(td);
-    return $(td).html();
-  });
-  console.log(test);
-
-  return ["a", "b", "c", "d", "e", "f", "g", "h", "i"];
-
-//  var levels = table.column(nCols - 1).data();
-//
-//  var sortGroup = [];
-//  for (row = 0; row < nRows; row++) {
-//    str += "String concatenation. ";
-//  }
-//
-//  return this.api().column( col, {order:'index'} ).nodes().map( function ( td, i ) {
-//    return $('input', td).val();
-//  });
-};
 
 
 $.fn.dataTable.ext.order['group'] = function(settings, col) {
@@ -246,16 +204,19 @@ $.fn.dataTable.ext.order['group'] = function(settings, col) {
   // load group and clicked (= value) column data
   var table = new $.fn.dataTable.Api(settings);
   var tableJQuery = $(table.table().node());
-
   var nCols = table.columns()[0].length;
-
   var group = table.column(nCols - 1).data();
+
   for(i = 0; i < group.length; i++) {
     group[i] = group[i].replace(/(_exp)/, "");
   }
 
-  var value = table.column(col).data();
-
+  var value = [];
+  if(col == 0){
+    value = table.rows().indexes();
+  } else {
+    value = table.column(col).data();
+  }
   // bind row data together
   a = [];
   for(i = 0; i < group.length; i++) {
@@ -263,69 +224,82 @@ $.fn.dataTable.ext.order['group'] = function(settings, col) {
     tmp.push(group[i]);
     tmp.push(value[i]);
     a.push(tmp);
-  };
+  }
 
   // split data into level groups
-  lvl = new Array();
+  lvl = [];
   for(i = 0; i < a.length; i++) {
   	if(typeof lvl[a[i][0].length - 1] == 'undefined'){
-    	lvl[a[i][0].length - 1] = new Array();
+    	lvl[a[i][0].length - 1] = [];
     }
     lvl[a[i][0].length - 1].push(a[i]);
   };
 
-  function sortFunction(a, b) {
+  // sort all level groups accoring to their "value"
+  var sortInfo = table.settings().order();
+  var sortCol = sortInfo[0][0]; // counting from left, starting with 0
+  var sortDir = sortInfo[0][1]; // either "asc" or "desc"
+
+  function sortAsc(a, b) {
     return a[1] - b[1];
   };
 
-  // sort all level groups accoring to their "value"
+  function sortDesc(a, b) {
+    return b[1] - a[1];
+  };
+
   for(i = 0; i < lvl.length; i++) {
-  	lvl[i].sort(sortFunction);
+    if(sortDir == "asc") {
+      lvl[i].sort(sortAsc);
+    } else if(sortDir == "desc") {
+      lvl[i].sort(sortDesc);
+    }
   };
 
   // remove values and make arrays group arrays only
-  lvlGroup = new Array();
+  lvlGroup = [];
   for(i = 0; i < lvl.length; i++) {
     if(typeof lvlGroup[i] == 'undefined'){
-    	lvlGroup[i] = new Array();
+    	lvlGroup[i] = [];
     }
     for(j = 0; j < lvl[i].length; j++) {
       lvlGroup[i].push(lvl[i][j][0]);
     }
   };
 
+
   // evaluate new order
-  for(i = lvlGroup.length - 1; i > 0; i--) {
+  var orderedGroups = lvlGroup[0].slice();
+  for(i = 1; i < lvlGroup.length; i++) {
     var parentGroup = "";
     var parentIndex = -1;
-    var counter = 0;
-  	for(j = 0; j < lvlGroup[i].length; j++) {
+  	for(j = lvlGroup[i].length - 1; j >= 0; j--) {
     	var currentParentGroup = lvlGroup[i][j].slice(0, -1);
-   		if(currentParentGroup == parentGroup) {
-      	counter = counter + 1;
-      } else {
+   		if(currentParentGroup != parentGroup) {
       	parentGroup = currentParentGroup;
-        parentIndex = lvlGroup[i-1].indexOf(parentGroup);
-        counter = 1;
+        parentIndex = orderedGroups.indexOf(parentGroup);
       }
-
-      lvlGroup[i-1].splice(parentIndex + counter, 0, lvlGroup[i][j]);
+      orderedGroups.splice(parentIndex + 1, 0, lvlGroup[i][j]);
     }
-    lvlGroup.splice(i, 1);
   }
-  var orderedGroups = lvlGroup[0];
 
   // current indices in grouped order
+  var groupOrigIndex = table.column(nCols - 1, {order: 'index'}).data();
+  for(i = 0; i < groupOrigIndex.length; i++) {
+    groupOrigIndex[i] = groupOrigIndex[i].replace(/(_exp)/, "");
+  }
   var orderedIndices = [];
-  for(i = 0; i < group.length; i++) {
-  	orderedIndices.push(orderedGroups.indexOf(group[i]));
+  for(i = 0; i < groupOrigIndex.length; i++) {
+  	orderedIndices.push(orderedGroups.indexOf(groupOrigIndex[i]));
   }
 
-//  console.log(orderedGroups);
-//  console.log(orderedIndices);
+  if(sortDir == "desc") {
+   for(i = 0; i < orderedIndices.length; i++) {
+    orderedIndices[i] = orderedIndices.length - orderedIndices[i] - 1;
+    }
+  }
 
   return(orderedIndices);
-
 };
 
 
