@@ -28,7 +28,6 @@ Level 1 indicates the highest - the most parent - level. Rows with levels
 above the level of preceding rows will be subordinated.
 
 ``` R
-# library(rtreetable)
 data <- data.frame(a = 1:9, b = c(5, 2, 3, 9, 4, 3, 1, 5, 3))
 levels <- c(1, 2, 2, 1, 2, 3, 3, 2, 1)
 rtreetable::treetable(data, levels)
