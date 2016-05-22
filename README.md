@@ -9,7 +9,6 @@ like
 * text filtering 
 * level filtering.
 
-
 ## Installation
 
 The package is available on github. The latest development version can easily be
