@@ -6,10 +6,6 @@
 #'
 #' @return Vector of group names.
 #'
-#' @examples
-#' levels <- c(1, 2, 2, 1, 2, 3, 3, 2, 1)
-#' levelsToGroups(levels)
-#' # c("1+", "11", "12", "2+", "21+", "211", "212", "22", "3")
 levelsToGroups <- function(levels) {
   groups <- character(length(levels))
   for (i in 1:length(levels)) {
@@ -78,20 +74,20 @@ treetable <- function(data, levels) {
                         ),
                         language = list(
                           emptyTable = "Keine Daten in der Tabelle vorhanden",
-                          info = "_START_ bis _END_ von _TOTAL_ Einträgen",
-                          infoEmpty = "0 bis 0 von 0 Einträgen",
-                          infoFiltered = "(gefiltert von _MAX_ Einträgen)",
+                          info = "_START_ bis _END_ von _TOTAL_ Eintr\u00E4gen",
+                          infoEmpty = "0 bis 0 von 0 Eintr\u00E4gen",
+                          infoFiltered = "(gefiltert von _MAX_ Eintr\u00E4gen)",
                           infoPostFix = "",
                           infoThousands = ".",
-                          lengthMenu = "_MENU_ Einträge anzeigen",
+                          lengthMenu = "_MENU_ Eintr\u00E4ge anzeigen",
                           loadingRecords = "Wird geladen...",
                           processing = "Bitte warten...",
                           search = "Suchen",
-                          zeroRecords = "Keine Einträge vorhanden.",
+                          zeroRecords = "Keine Eintr\u00E4ge vorhanden.",
                           paginate = list(
                             first = "Erste",
-                            previous = "Zurück",
-                            'next' = "Nächste",
+                            previous = "Zur\u00FCck",
+                            'next' = "N\u00E4chste",
                             last = "Letzte"
                           ),
                           aria = list(

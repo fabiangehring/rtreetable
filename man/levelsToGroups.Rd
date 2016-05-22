@@ -2,7 +2,9 @@
 % Please edit documentation in R/treetable.R
 \name{levelsToGroups}
 \alias{levelsToGroups}
-\title{Translates hierarchy levels into unique group names which represent the elements hierarchy position.}
+\title{Translates hierarchy levels into unique group names which represent the
+elements hierarchy position. A '_exp' is added at the end of the groups name
+if it has child elements.}
 \usage{
 levelsToGroups(levels)
 }
@@ -13,11 +15,8 @@ levelsToGroups(levels)
 Vector of group names.
 }
 \description{
-Translates hierarchy levels into unique group names which represent the elements hierarchy position.
-}
-\examples{
-levels <- c(1, 2, 2, 1, 2, 3, 3, 2, 1)
-levelsToGroups(levels)
-# c("1+", "11", "12", "2+", "21+", "211", "212", "22", "3")
+Translates hierarchy levels into unique group names which represent the
+elements hierarchy position. A '_exp' is added at the end of the groups name
+if it has child elements.
 }
 

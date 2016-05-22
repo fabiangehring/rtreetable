@@ -8,7 +8,8 @@ Description: More about what it does (maybe more than one line)
 License: What license is it under?
 LazyData: TRUE
 Imports:
-    DT (>= 0.1)
+    DT (>= 0.1),
+    htmltools
 Suggests:
     testthat (>= 1.0.1),
     roxygen2 (>= 5.0.1)
