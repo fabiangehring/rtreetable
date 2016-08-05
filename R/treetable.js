@@ -303,5 +303,10 @@ $.fn.dataTable.ext.order['group'] = function(settings, col) {
 };
 
 
+function applyCss(settings, css) {
+  eval(css);
+}
+
+
 
 

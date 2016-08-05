@@ -2,6 +2,7 @@
 .tree-level-dropdown-container {
   float: left;
   color: #333;
+  padding-bottom: 10px;
 }
 
 .tree-collapse-all, .tree-expand-all {

@@ -1,5 +1,5 @@
 #' Translates hierarchy levels into unique group names which represent the
-#' elements hierarchy position. A '_exp' is added at the end of the groups name
+#' elements hierarchy position. An '_exp' is added at the end of the groups name
 #' if it has child elements.
 #'
 #' @param levels Vector of hierarchy levels.
@@ -20,6 +20,21 @@ levelsToGroups <- function(levels) {
   return(groups)
 }
 
+configToCss <- function(config) {
+  properties <- NULL
+  for(name in names(config)) {
+    elemProperties <- list()
+    for(property in config[name]) {
+      elemPropertyString <- paste0("'", names(property), "':'", property, "'")
+      elemProperties <- c(elemProperties, elemPropertyString)
+    }
+    elemProperties <- paste0(elemProperties, collapse = ",")
+    properties <- c(properties,
+                    paste0("$('", name, "').css({", elemProperties, "});"))
+  }
+  DT::JS(properties)
+}
+
 
 #' Title
 #'
@@ -31,10 +46,13 @@ levelsToGroups <- function(levels) {
 #' @export
 #'
 #' @examples
-#' data <- data.frame(a = 1:9, b = c(5, 2, 3, 9, 4, 3, 1, 5, 3))
+#' data <- data.frame(a = 1:9, x= c(9,8,7,6,5,4,3,2,1), b = c(5, 2, 3, 9, 4, 3, 1, 5, 3))
 #' levels <- c(1, 2, 2, 1, 2, 3, 3, 2, 1)
-#' treetable(data, levels)
-treetable <- function(data, levels) {
+#' config <- list(thead = list("background-color" = "red"))
+#' treetable(data, levels, config)
+#'
+
+treetable <- function(data, levels, config = NULL) {
 
   data[[ncol(data) + 1]] <- levels
   groups <- levelsToGroups(levels)
@@ -48,6 +66,7 @@ treetable <- function(data, levels) {
   data$a <- paste0("<div class = toggle-container>", toggleState ,"</div><span>", data$a, "</span>")
 
   dt <- DT::datatable(data,
+                      class = "row-border hover",
                       escape = F,
                       rownames = F,
                       options = list(
@@ -57,12 +76,16 @@ treetable <- function(data, levels) {
                           "function(row, data, index) {
                             addTreeGroup(row, data);
                             addTreeLevel(row, data);
-                          }"),
+                          }"
+                        ),
                         initComplete = DT::JS(
-                          "function(settings, json) {
+                          paste0(
+                            "function(settings, json) {
                             addLevelDropdown(settings);
                             addCustomSearch(settings);
-                          }"
+                            applyCss(settings,\"", configToCss(config), "\");
+                            }"
+                          )
                         ),
                         columnDefs = list(
                           list(targets = c(-2, -1),
