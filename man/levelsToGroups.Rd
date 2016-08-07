@@ -3,7 +3,7 @@
 \name{levelsToGroups}
 \alias{levelsToGroups}
 \title{Translates hierarchy levels into unique group names which represent the
-elements hierarchy position. A '_exp' is added at the end of the groups name
+elements hierarchy position. An '_exp' is added at the end of the groups name
 if it has child elements.}
 \usage{
 levelsToGroups(levels)
@@ -16,7 +16,7 @@ Vector of group names.
 }
 \description{
 Translates hierarchy levels into unique group names which represent the
-elements hierarchy position. A '_exp' is added at the end of the groups name
+elements hierarchy position. An '_exp' is added at the end of the groups name
 if it has child elements.
 }
 

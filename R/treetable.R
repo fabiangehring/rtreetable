@@ -20,7 +20,7 @@ levelsToGroups <- function(levels) {
   return(groups)
 }
 
-configToCss <- function(config) {
+cssToString <- function(config) {
   properties <- NULL
   for(name in names(config)) {
     elemProperties <- list()
@@ -45,9 +45,9 @@ configToCss <- function(config) {
 #' @export
 #'
 #' @examples
-#' data <- data.frame(a = 1:9, x= c(9,8,7,6,5,4,3,2,1), b = c(5, 2, 3, 9, 4, 3, 1, 5, 3))
+#' data <- data.frame(a = 1:9, x = c(9,8,7,6,5,4,3,2,1), b = c(5, 2, 3, 9, 4, 3, 1, 5, 3))
 #' levels <- c(1, 2, 2, 1, 2, 3, 3, 2, 1)
-#' config <- list(
+#' css <- list(
 #'   "thead" = list(
 #'     "background-color" = "rgba(255,0,0,0.5)",
 #'     color = "white"
@@ -56,9 +56,9 @@ configToCss <- function(config) {
 #'     "background-color" = "rgba(255,0,0,0.5)"
 #'   )
 #' )
-#' treetable(data, levels, config)
+#' treetable(data, levels, css)
 
-treetable <- function(data, levels, config = NULL) {
+treetable <- function(data, levels, css = NULL) {
 
   data[[ncol(data) + 1]] <- levels
   groups <- levelsToGroups(levels)
@@ -89,7 +89,7 @@ treetable <- function(data, levels, config = NULL) {
                             "function(settings, json) {
                             addLevelDropdown(settings);
                             addCustomSearch(settings);
-                            applyCss(settings,\"", configToCss(config), "\");
+                            applyCss(settings,\"", cssToString(css), "\");
                             }"
                           )
                         ),

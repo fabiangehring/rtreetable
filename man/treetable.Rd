@@ -4,7 +4,7 @@
 \alias{treetable}
 \title{Title}
 \usage{
-treetable(data, levels)
+treetable(data, levels, css = NULL)
 }
 \arguments{
 \item{data}{data.frame containing data to be shown}
@@ -19,8 +19,17 @@ package DT
 Title
 }
 \examples{
-data <- data.frame(a = 1:9, b = c(5, 2, 3, 9, 4, 3, 1, 5, 3))
+data <- data.frame(a = 1:9, x = c(9,8,7,6,5,4,3,2,1), b = c(5, 2, 3, 9, 4, 3, 1, 5, 3))
 levels <- c(1, 2, 2, 1, 2, 3, 3, 2, 1)
-treetable(data, levels)
+css <- list(
+  "thead" = list(
+    "background-color" = "rgba(255,0,0,0.5)",
+    color = "white"
+  ),
+  ".tree-level-1" = list(
+    "background-color" = "rgba(255,0,0,0.5)"
+  )
+)
+treetable(data, levels, css)
 }
 
