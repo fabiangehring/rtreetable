@@ -32,9 +32,8 @@ configToCss <- function(config) {
     properties <- c(properties,
                     paste0("$('", name, "').css({", elemProperties, "});"))
   }
-  DT::JS(properties)
+  return(paste0(properties, collapse = "\\n"))
 }
-
 
 #' Title
 #'
@@ -48,7 +47,15 @@ configToCss <- function(config) {
 #' @examples
 #' data <- data.frame(a = 1:9, x= c(9,8,7,6,5,4,3,2,1), b = c(5, 2, 3, 9, 4, 3, 1, 5, 3))
 #' levels <- c(1, 2, 2, 1, 2, 3, 3, 2, 1)
-#' config <- list(thead = list("background-color" = "red", color = "white"))
+#' config <- list(
+#'   "thead" = list(
+#'     "background-color" = "rgba(255,0,0,0.5)",
+#'     color = "white"
+#'   ),
+#'   ".tree-level-1" = list(
+#'     "background-color" = "rgba(255,0,0,0.5)"
+#'   )
+#' )
 #' treetable(data, levels, config)
 
 treetable <- function(data, levels, config = NULL) {
