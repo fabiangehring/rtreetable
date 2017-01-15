@@ -8,17 +8,27 @@
 #'
 levelsToGroups <- function(levels) {
   groups <- character(length(levels))
-  for (i in 1:length(levels)) {
-    lowerLvlIdx <- which(head(levels, i) < levels[i])
-    maxLowerLvlIdx <- ifelse(length(lowerLvlIdx) == 0, 0, max(lowerLvlIdx))
-    sameLvlIdx <- maxLowerLvlIdx +
-      which(levels[(maxLowerLvlIdx + 1):i] == levels[i])
-    groups[i] <- paste0(groups[maxLowerLvlIdx], length(sameLvlIdx))
+  uniqueLevels <- sort(unique(levels))
+
+  topLvlIdx <- levels == uniqueLevels[1]
+  groups[topLvlIdx] <- seq_len(sum(topLvlIdx))
+
+  for (lvl in uniqueLevels[-1]) {
+    allPrevLvlCum <- cumsum(levels < lvl)
+    allPrevLvlCount <- table(allPrevLvlCum)
+    allPrevLvlIdx <- cumsum(allPrevLvlCount) - allPrevLvlCount + 1
+    allPrevLvlRep <- rep(allPrevLvlIdx, allPrevLvlCount)
+
+    prevLvlGroup <- groups[allPrevLvlRep][levels == lvl]
+    thisLvlGroup <- unlist(Map(seq, 1, table(prevLvlGroup)))
+    groups[levels == lvl] <- paste0(prevLvlGroup, thisLvlGroup)
+
+    prevLvlExtIdx <- unique(allPrevLvlRep[levels == lvl])
+    groups[prevLvlExtIdx] <- paste0(groups[prevLvlExtIdx], "_exp")
   }
-  expanded <- c(head(levels, -1) < tail(levels, -1), F)
-  groups[expanded] <- paste0(groups[expanded], "_exp")
   return(groups)
 }
+
 
 cssToString <- function(config) {
   properties <- NULL
@@ -58,7 +68,7 @@ cssToString <- function(config) {
 #' )
 #' treetable(data, levels, css)
 
-treetable <- function(data, levels, css = NULL) {
+treetable <- function(data, levels, css = NULL, server = FALSE) {
 
   data[[ncol(data) + 1]] <- levels
   groups <- levelsToGroups(levels)
@@ -67,7 +77,7 @@ treetable <- function(data, levels, css = NULL) {
   toggleState <- character(nrow(data))
   toggleState[gsub("[0-9]+(_exp)", "\\1", groups) == "_exp"] <- "tree-toggle-expanded"
   toggleState[gsub("[0-9]+(_col)", "\\1", groups) == "_col"] <- "tree-toggle-collapsed"
-  toggleState[toggleState != ""] <- paste0("<img class = '", toggleState[toggleState != ""], "' onclick = 'toggleTree(this);' />")
+  toggleState[toggleState != ""] <- paste0("<img class = '", toggleState[toggleState != ""], "' onclick = 'toggleTree(this,", tolower(server), ");' />")
 
   data$a <- paste0("<div class = toggle-container>", toggleState ,"</div><span>", data$a, "</span>")
 

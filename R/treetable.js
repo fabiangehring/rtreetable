@@ -1,43 +1,49 @@
 
-function toggleTree(x) {
-
-  // invalidate level-dropdown
-  var tableWrapper = $(x).closest(".dataTables_wrapper");
-  var dropdown = tableWrapper.find(".tree-level-dropdown");
-  dropdown.val(-1);
-
-  $(x).toggleClass("tree-toggle-collapsed tree-toggle-expanded");
+function toggleTree(x, server) {
 
   var tr = $(x).closest('tr');
   var groupFromClassRegex = new RegExp("(?:^|\\s)(?:tree-group-)([^\\s]+)");
   var clickedGroup = tr.attr("class").match(groupFromClassRegex)[1];
 
-  var group = clickedGroup.slice(0, -4);
-  var tableJQuery = $(x).closest('table');
-
-  collapseTr = tableJQuery.find("*[class*='tree-group-" + group + "']");
-  regExpCollapse = new RegExp("(^|\\s)tree-group-" + group + "[0-9]");
-  regExpExpand = new RegExp("(^|\\s)tree-group-" + group + "[0-9](_exp)?(\\s|$)");
-
-
-  if($(x).hasClass("tree-toggle-collapsed")) {
-    collapseTr = collapseTr.filter(function() {
-      return(this.className.match(regExpCollapse));
-    });
-    collapseTr.hide();
-
-    regExpCollapseToggles = new RegExp("(^|\\s)tree-group-" + group + "[0-9](_exp)(\\s|$)");
-    collapseToggles = collapseTr.filter(function() {
-      return(this.className.match(regExpCollapseToggles));
-    });
-    collapseToggles.find('.tree-toggle-expanded').toggleClass("tree-toggle-expanded tree-toggle-collapsed");
-    collapseToggles.css('display: inline-block;');
-
+  if(server) {
+    console.log(clickedGroup);
+    Shiny.onInputChange("clickedGroup", clickedGroup);
   } else {
-    collapseTr = collapseTr.filter(function() {
-      return(this.className.match(regExpExpand));
-    });
-    collapseTr.show();
+
+    // invalidate level-dropdown
+    var tableWrapper = $(x).closest(".dataTables_wrapper");
+    var dropdown = tableWrapper.find(".tree-level-dropdown");
+    dropdown.val(-1);
+
+    $(x).toggleClass("tree-toggle-collapsed tree-toggle-expanded");
+
+    var group = clickedGroup.slice(0, -4);
+    var tableJQuery = $(x).closest('table');
+
+    collapseTr = tableJQuery.find("*[class*='tree-group-" + group + "']");
+    regExpCollapse = new RegExp("(^|\\s)tree-group-" + group + "[0-9]");
+    regExpExpand = new RegExp("(^|\\s)tree-group-" + group + "[0-9](_exp)?(\\s|$)");
+
+
+    if($(x).hasClass("tree-toggle-collapsed")) {
+      collapseTr = collapseTr.filter(function() {
+        return(this.className.match(regExpCollapse));
+      });
+      collapseTr.hide();
+
+      regExpCollapseToggles = new RegExp("(^|\\s)tree-group-" + group + "[0-9](_exp)(\\s|$)");
+      collapseToggles = collapseTr.filter(function() {
+        return(this.className.match(regExpCollapseToggles));
+      });
+      collapseToggles.find('.tree-toggle-expanded').toggleClass("tree-toggle-expanded tree-toggle-collapsed");
+      collapseToggles.css('display: inline-block;');
+
+    } else {
+      collapseTr = collapseTr.filter(function() {
+        return(this.className.match(regExpExpand));
+      });
+      collapseTr.show();
+    }
   }
 }
 
